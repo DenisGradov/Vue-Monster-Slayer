@@ -11,23 +11,45 @@
   <body>
     <div class="wrapper">
       <header>Monster Slayer</header>
-      <main>
-        <div class="hpInfo-block">
+      <main id="game">
+        <div v-show="gameIsNow" class="hpInfo-block">
           <h1>Monster Health</h1>
           <div class="hpBar">
-            <div class="hpBar__fill"></div>
+            <div :style="{width: widthMonsterHealth}" class="hpBar__fill"></div>
+            <h4 class="hp">{{monsterHealth}}/100</h4>
           </div>
         </div>
-        <div class="hpInfo-block">
+        <div v-show="gameIsNow" class="hpInfo-block">
           <h1>Your Health</h1>
           <div class="hpBar">
-            <div class="hpBar__fill"></div>
+            <div :style="{width: widthPlayerHealth}" class="hpBar__fill"></div>
+            <h4 class="hp">{{playerHealth}}/100</h4>
           </div>
         </div>
+        <div class="gameOver" v-if="winner">
+          <h2>Game Over!</h2>
+          <h3 v-if="winner === 'player'">You won!</h3>
+          <h3 v-else-if="winner === 'monster'">You lost!</h3>
+          <h3 v-else>It's draw!</h3>
+        </div>
         <div class="buttonsBlock">
-          <button>ATTACK</button>
-          <button>SPECIAL ATTACK</button>
-          <button>HEAL</button>
+          <button v-show="!gameIsNow" @click="restartGame()">RESTART</button>
+          <button v-show="gameIsNow" @click="attackMonster()">ATTACK</button>
+          <button
+            v-show="gameIsNow"
+            :class="specialAttackReady"
+            @click="specialAttackMonster()"
+          >
+            SPECIAL ATTACK
+          </button>
+          <button v-show="gameIsNow" @click="healPlayer()">HEAL</button>
+          <button v-show="gameIsNow" @click="stopGame()">SURRENDER</button>
+          <div class="logs">
+            <h2 class="logsTitle">Battle Log</h2>
+            <ul>
+              <li v-for="log in logs">{{log}}</li>
+            </ul>
+          </div>
         </div>
       </main>
     </div>
